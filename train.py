@@ -6,6 +6,7 @@ import numpy as np
 import os
 import sys
 import time
+from os.path import basename
 
 EPOCHS=2
 
@@ -72,14 +73,14 @@ model = build_model(
   batch_size=BATCH_SIZE)
 
 def loss(labels, logits):
-  return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
+  return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
 model.compile(
     optimizer = tf.train.AdamOptimizer(),
     loss = loss)
 
 # Directory where the checkpoints will be saved
-checkpoint_dir = './checkpoints_' + filename
+checkpoint_dir = './models/' + basename(filename) + "_model"
 # Name of the checkpoint files
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
 

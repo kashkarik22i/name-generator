@@ -1,4 +1,4 @@
-
+import sys
 import pandas as pd
 import tensorflow as tf
 tf.enable_eager_execution()
@@ -6,8 +6,21 @@ tf.enable_eager_execution()
 import numpy as np
 import os
 import time
+from os.path import basename
 
-filename = sys.argv[1]
+model = sys.argv[1]
+if model == "russian_first_names":
+  filename = "./data/russian_first_names.csv"
+elif model == "russian_last_names":
+  filename = "./data/russian_last_names.csv"
+elif model == "german_first_names":
+  filename = "./data/german_first_names.csv"
+elif model == "english_first_names":
+  filename = "./data/english_first_names.csv"
+elif model == "hindi_first_names":
+  filename = "./data/hindi_first_names.csv"
+else:
+  exit(123)
 
 input = pd.read_csv(filename)
 text = input.sum()['name'].lower()
@@ -16,7 +29,7 @@ char2idx = {u:i for i, u in enumerate(vocab)}
 idx2char = np.array(vocab)
 
 # Directory where the checkpoints will be saved
-checkpoint_dir = './training_checkpoints_names'
+checkpoint_dir = './models/' + basename(filename) + "_model"
 # Name of the checkpoint files
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
 
@@ -32,6 +45,9 @@ embedding_dim = 64
 
 # Number of RNN units
 rnn_units = 256
+
+import functools
+rnn = functools.partial(tf.keras.layers.GRU, recurrent_activation='sigmoid')
 
 def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
   model = tf.keras.Sequential([
@@ -90,4 +106,6 @@ def generate_text(model, start_string):
 
   return (start_string + ''.join(text_generated)).split(' ')[0]
 
-print(generate_text(model, start_string=u"d"))
+for line in sys.stdin:
+    print(generate_text(model, start_string=line.rstrip()))
+
