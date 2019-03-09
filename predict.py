@@ -73,7 +73,7 @@ def generate_text(model, start_string):
   # Evaluation step (generating text using the learned model)
 
   # Number of characters to generate
-  num_generate = 16
+  num_generate = 25
 
   # Converting our start string to numbers (vectorizing) 
   input_eval = [char2idx[s] for s in start_string]

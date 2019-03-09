@@ -8,7 +8,7 @@ import sys
 import time
 from os.path import basename
 
-EPOCHS=2
+EPOCHS=10
 
 filename = sys.argv[1]
 if (len(sys.argv) >= 3):

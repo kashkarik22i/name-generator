@@ -17,4 +17,5 @@ russian_german_names
 Disclaimer: code is bad, hard to customize without ugly hacking. It is a project for fun in the end, right?
 
 To train one can currently use something like this:
-`python train.py data/russian_first_names.csv`
+`python train.py data/russian_first_names.csv 10`
+where 10 is the number of epochs (default 10)
