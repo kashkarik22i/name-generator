@@ -11,7 +11,7 @@ other models:
 russian_first_names
 russian_last_names
 russian_english_names
-russian_hindi_names
+russian_indian_names
 russian_german_names
 
 Disclaimer: code is bad, hard to customize without ugly hacking. It is a project for fun in the end, right?
