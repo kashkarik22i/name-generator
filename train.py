@@ -1,72 +1,92 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
+import pandas as pd
 import tensorflow as tf
 tf.enable_eager_execution()
 
-import io
+import numpy as np
 import os
+import sys
+import time
 
-TRAIN_FILE = "sample_train_input.txt"
-VOCABULARY = "out/vocabulary"
+EPOCHS=2
 
+filename = sys.argv[1]
+if (len(sys.argv) >= 3):
+  EPOCHS = int(sys.argv[2])
 
-def train():
-    vocab = save_or_load_vocabulary()
-    data_as_ints = get_data_as_ints(read_train()) # TODO proper code. type list[ndarray]
-    dateset = create_tf_dataset(data_as_ints)
-    # TODO instead of batch just use samples as in the training data
-    sequences = char_dataset.batch(seq_length+1, drop_remainder=True)
+input = pd.read_csv(filename)
+text = input.sum()['name'].lower()
+vocab = sorted(set(text + " "))
+char2idx = {u:i for i, u in enumerate(vocab)}
+idx2char = np.array(vocab)
 
-    dataset = sequences.map(split_input_target)
-    # Batch size
-    BATCH_SIZE = 64
-    examples_per_epoch = len(text)
-    steps_per_epoch = examples_per_epoch//BATCH_SIZE
-    BUFFER_SIZE = 10000
-    dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True)
+def text_to_array(text):
+    return np.array([char2idx[c] for c in text.lower() + " "]) 
 
-    # Length of the vocabulary in chars
-    vocab_size = len(vocab)
+input_data = input.applymap(text_to_array)['name'].values
 
-    # The embedding dimension
-    embedding_dim = 256
-
-    # Number of RNN units
-    rnn_units = 1024
-
-
+dataset = tf.data.Dataset.from_generator(lambda: input_data, 
+                                         tf.int64)
 
 def split_input_target(chunk):
     input_text = chunk[:-1]
     target_text = chunk[1:]
     return input_text, target_text
 
+train_set = dataset.map(split_input_target)
 
+BATCH_SIZE = 1
+examples_per_epoch = input_data.size
+steps_per_epoch = examples_per_epoch//BATCH_SIZE
+BUFFER_SIZE = 10000
 
-def save_or_load_vocabulary():
-    if os.exists(VOCABULARY): # right method? TODO
-        vocab = load() # need proper method. TODO not on this computer
-    else:
-        lines = read_train()
-        vocab = vocabulary(lines)
-        save_vocabulary(vocab)
-    return vocab
+batched_trainset = train_set.shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True)
 
+# Length of the vocabulary in chars
+vocab_size = len(vocab)
 
-def save_vocabulary(vocab):
-    with io.open(VOCABULARY, encoding="UTF-8", mode="w") as f:
-        f.write("\n".join(sorted(list(vocab))))
-        f.write("\n")
+# The embedding dimension 
+embedding_dim = 64
 
+# Number of RNN units
+rnn_units = 256
 
-def vocabulary(lines):
-    return set(sum([list(set(l)) for l in lines], []))
+import functools
+rnn = functools.partial(tf.keras.layers.GRU, recurrent_activation='sigmoid')
 
+def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
+  model = tf.keras.Sequential([
+    tf.keras.layers.Embedding(vocab_size, embedding_dim, 
+                              batch_input_shape=[batch_size, None]),
+    rnn(rnn_units,
+        return_sequences=True, 
+        recurrent_initializer='glorot_uniform',
+        stateful=True),
+    tf.keras.layers.Dense(vocab_size)
+  ])
+  return model
 
-def read_train():
-    with io.open(TRAIN_FILE, encoding="UTF-8") as f:
-        return f.read().splitlines()
+model = build_model(
+  vocab_size = len(vocab), 
+  embedding_dim=embedding_dim, 
+  rnn_units=rnn_units, 
+  batch_size=BATCH_SIZE)
 
+def loss(labels, logits):
+  return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
 
-if __name__ == "__main__":
-    train()
+model.compile(
+    optimizer = tf.train.AdamOptimizer(),
+    loss = loss)
+
+# Directory where the checkpoints will be saved
+checkpoint_dir = './checkpoints_' + filename
+# Name of the checkpoint files
+checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
+
+checkpoint_callback=tf.keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_prefix,
+    save_weights_only=True)
+
+history = model.fit(batched_trainset.repeat(), epochs=EPOCHS, steps_per_epoch=steps_per_epoch, callbacks=[checkpoint_callback])
+
+model.summary()
