@@ -83,6 +83,16 @@ thilpaldinza
 tieson
 frewinetta
 
-Indian first names:
+Russian first names:
 
-
+матиан
+валав
+рофор
+додлав
+семёсей
+гадофий
+олий
+алевегграт
+кокаланазий
+микар
+летифо
