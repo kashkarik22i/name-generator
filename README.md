@@ -22,7 +22,8 @@ To train one can currently use something like this:
 where 10 is the number of epochs (default 10)
 
 Some example outputs:
-Russian las names:
+
+Russian last names:
 
 гзин
 дабутов
@@ -48,4 +49,40 @@ Russian las names:
 кузков
 
 German first names:
+
+gery
+klaudderrick
+thomarr
+gamyl
+ungilberot
+luhilda
+seluge
+madu
+manfrend
+kairen
+wolf
+kerlaracke
+heni
+pohrel
+
+English first names:
+
+louenie
+miltbi
+mielle
+smarke
+sting
+bronkema
+powerdnette
+lauriane
+lizetause
+cheont
+maryessrick
+cyndylyn
+thilpaldinza
+tieson
+frewinetta
+
+Indian first names:
+
 
