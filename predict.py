@@ -23,6 +23,7 @@ else:
   exit(123)
 
 input = pd.read_csv(filename)
+set_of_names = set(map(lambda x: x.lower(), input['name'].tolist()))
 text = input.sum()['name'].lower()
 vocab = sorted(set(text + " "))
 char2idx = {u:i for i, u in enumerate(vocab)}
@@ -107,5 +108,7 @@ def generate_text(model, start_string):
   return (start_string + ''.join(text_generated)).split(' ')[0]
 
 for line in sys.stdin:
-    print(generate_text(model, start_string=line.rstrip()))
+    generated = generate_text(model, start_string=line.rstrip())
+    if not generated in set_of_names:
+        print(generated)
 

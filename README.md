@@ -1,6 +1,7 @@
 # name-generator
-Generate random plausible names
+Generate random plausible names. The names generated are not present in the training data
 
+Tested with python 3.7
 There are trained models for Russian first and last names as
 well as for English, German and Hindi first names
 
@@ -19,3 +20,32 @@ Disclaimer: code is bad, hard to customize without ugly hacking. It is a project
 To train one can currently use something like this:
 `python train.py data/russian_first_names.csv 10`
 where 10 is the number of epochs (default 10)
+
+Some example outputs:
+Russian las names:
+
+гзин
+дабутов
+ежсёнов
+ётов
+ванзомионов
+жпов
+имин
+коробов
+луиниконов
+минирюдов
+нипонов
+пархомин
+ремьёв
+стров
+тобонов
+завромков
+улёбин
+хагин
+улывинов
+семсипов
+ивазапов
+кузков
+
+German first names:
+
