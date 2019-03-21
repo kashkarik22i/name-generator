@@ -50,20 +50,36 @@ Russian last names:
 
 German first names:
 
-gery
-klaudderrick
-thomarr
-gamyl
-ungilberot
-luhilda
-seluge
-madu
-manfrend
-kairen
-wolf
-kerlaracke
-heni
-pohrel
+inge
+mars
+ludo
+heramd
+polvin
+ard
+bermias
+cölvemin
+exim
+halpo
+jonall
+phillars
+terick
+vonher
+bert
+dvilcaster
+elbeld
+frald
+guodo
+hjolanis
+icheige
+jaunliacer
+kurrich
+lyus
+ngüswil
+osvin
+swonian
+utrich
+valvin
+wogergaur
 
 English first names:
 
@@ -96,3 +112,4 @@ Russian first names:
 кокаланазий
 микар
 летифо
+
